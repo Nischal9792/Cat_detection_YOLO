@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-This project implements a system to detect the breed of a cat using an image.
+This project implements a system to detect the breed of a cat using an image. 
 
 ## Description
 
