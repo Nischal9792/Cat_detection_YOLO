@@ -6,7 +6,7 @@ This project implements a system to detect the breed of a cat using an image.
 
 ## Description
 
-This project utilizes machine learning techniques to identify the breed of a cat from its image. It leverages a deep learning model trained on a dataset of labeled cat images.
+This project utilizes machine learning techniques to identify the breed of a cat from its image. It leverages a deep learning model trained on a dataset of labeled cat images using python.
 
 ## Requirements
 
