@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cat Breed Detection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            text-align: center;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        h1 {
+            color: #333333;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        input[type="file"] {
+            margin-bottom: 20px;
+            padding: 10px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f0f8ff;
+            border-radius: 5px;
+            color: #333;
+            font-size: 16px;
+            display: none; /* Hidden by default */
+        }
+
+        .error {
+            color: red;
+        }
+
+        #uploadedImage {
+            max-width: 100%;
+            margin-top: 20px;
+            border-radius: 8px;
+        }
+
+        #resultContainer {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Main Body -->
+    <div class="container">
+        <h1>Cat Breed Detection</h1>
+        <form id="uploadForm" enctype="multipart/form-data">
+            <input type="file" id="fileInput" name="file" accept="image/*" required>
+            <button type="submit">Predict</button>
+        </form>
+
+        <!-- Display uploaded image -->
+        <div id="imageContainer" style="display:none;">
+            <img id="uploadedImage" src="" alt="Uploaded Image">
+        </div>
+
+        <!-- Display result -->
+        <div id="resultContainer">
+            <div class="result" id="result"></div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById("uploadForm");
+        const resultDiv = document.getElementById("result");
+        const uploadedImage = document.getElementById("uploadedImage");
+        const imageContainer = document.getElementById("imageContainer");
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault(); // Prevent page reload
+            const fileInput = document.getElementById("fileInput");
+            const file = fileInput.files[0];
+
+            if (!file) {
+                resultDiv.textContent = "Please upload a file.";
+                resultDiv.style.display = "block";
+                resultDiv.className = "result error";
+                return;
+            }
+
+            // Display uploaded image
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                uploadedImage.src = event.target.result;
+                imageContainer.style.display = "block"; // Show image container
+            };
+            reader.readAsDataURL(file);
+
+            // Display a loading message
+            resultDiv.textContent = "Processing...";
+            resultDiv.style.display = "block";
+            resultDiv.className = "result";
+
+            const formData = new FormData();
+            formData.append("file", file);
+
+            try {
+                const response = await fetch("/predict", {
+                    method: "POST",
+                    body: formData,
+                });
+
+                if (response.ok) {
+                    const prediction = await response.text();
+                    resultDiv.textContent = prediction;
+                } else {
+                    resultDiv.textContent = "Error: Unable to process the image.";
+                    resultDiv.className = "result error";
+                }
+            } catch (error) {
+                resultDiv.textContent = "Error: Something went wrong.";
+                resultDiv.className = "result error";
+            }
+        });
+    </script>
+</body>
+</html>
